@@ -1,1 +1,1 @@
-export { default as PostCard } from "./PostCard/PostCard.vue";
+export { default as PostCard } from "./PostCard.vue";

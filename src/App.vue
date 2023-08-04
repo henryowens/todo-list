@@ -1,13 +1,29 @@
 <template>
-  <p v-if="isError || error">
-    There was an error loading the page: {{ error }}
-  </p>
-  <p v-else-if="loading">Loading</p>
-  <div v-else>
-    <div class="flex justify-between">
-      <h1>Sortable Post List</h1>
+  <div class="max-w-7xl m-auto px-8 py-6">
+    <p v-if="isError || error">
+      There was an error loading the page: {{ error }}
+    </p>
+    <p v-else-if="loading || !data">Loading</p>
+    <div v-else>
+      <div class="flex justify-between mb-6">
+        <h1 class="text-xl">Sortable Post List</h1>
+      </div>
+      <div class="flex">
+        <div
+          class="flex flex-col gap-8 overflow-y-auto rounded-lg max-w-md w-full"
+        >
+          <PostCard
+            v-for="(post, i) in data"
+            :key="i"
+            v-bind="post"
+            :can-move-up="i !== 0"
+            :can-move-down="i + 1 !== data.length"
+            @up="onUp"
+            @down="onDown"
+          />
+        </div>
+      </div>
     </div>
-    <PostCard v-for="(post, i) in data" :key="i" v-bind="post" />
   </div>
 </template>
 
@@ -23,7 +39,13 @@ const { isLoading, isFetching, isError, data, error } = useQuery({
   queryFn: postsApiService.get,
 });
 
-const loading = computed(
-  () => isLoading.value || isFetching.value || !data.value
-);
+const onUp = () => {
+  console.log("onUp");
+};
+
+const onDown = () => {
+  console.log("onDown");
+};
+
+const loading = computed(() => isLoading.value || isFetching.value);
 </script>
