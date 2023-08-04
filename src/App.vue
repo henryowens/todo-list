@@ -1,17 +1,15 @@
 <template>
-  <div class="max-w-7xl m-auto px-8 py-6">
+  <div class="app__container">
     <p v-if="isError || error">
       There was an error loading the page: {{ error }}
     </p>
     <p v-else-if="loading || !data">Loading</p>
     <div v-else>
-      <div class="flex justify-between mb-6">
-        <h1 class="text-xl">Sortable Post List</h1>
+      <div class="page__container">
+        <h1 class="page__title">Sortable Post List</h1>
       </div>
-      <div class="flex">
-        <div
-          class="flex flex-col gap-8 overflow-y-auto rounded-lg max-w-md w-full"
-        >
+      <div class="page__content">
+        <div class="post__cards__container">
           <PostCard
             v-for="(post, i) in data"
             :key="i"
@@ -49,3 +47,29 @@ const onDown = () => {
 
 const loading = computed(() => isLoading.value || isFetching.value);
 </script>
+
+<style lang="scss" scoped>
+.app__container {
+  @apply max-w-7xl;
+  @apply px-8 py-6;
+  @apply m-auto;
+  .page__container {
+    @apply flex justify-between;
+    @apply mb-6;
+    .page__title {
+      @apply text-xl;
+    }
+    .page__content {
+      @apply flex;
+      .post__cards__container {
+        @apply flex flex-col;
+        @apply gap-8;
+        @apply overflow-y-auto;
+        @apply rounded-lg;
+        @apply max-w-md w-full;
+      }
+    }
+  }
+}
+</style>
+>

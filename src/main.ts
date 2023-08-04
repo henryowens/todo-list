@@ -3,6 +3,6 @@ import { createApp } from "vue";
 
 import App from "./App.vue";
 import "@/service/fontawsome";
-import "./app.scss";
+import "./index.scss";
 
 createApp(App).use(VueQueryPlugin).mount("#app");
