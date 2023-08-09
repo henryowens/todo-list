@@ -2,7 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Vithkuqi:wght@400;500;600;700&display=swap");
+
 body {
-  @apply bg-slate-200;
+  @apply bg-charcoal-200;
   @apply min-h-screen;
+  font-family: "Noto Sans Vithkuqi", sans-serif;
 }

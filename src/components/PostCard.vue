@@ -1,6 +1,6 @@
 <template>
   <div class="post__card">
-    <h1 class="post__name">Card {{ id }}</h1>
+    <h1 class="post__name">{{ name }}</h1>
     <div class="post__navigation">
       <FontAwesomeIcon
         v-if="canMoveUp"
@@ -19,16 +19,16 @@
 </template>
 
 <script setup lang="ts">
+import { Post } from "@/api/posts/models";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-const props = defineProps<{
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
+interface PostCardProps {
+  name: string;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
-}>();
+}
+
+const props = defineProps<PostCardProps>();
 
 const emit = defineEmits<{
   (e: "up", id: number): void;
@@ -43,7 +43,7 @@ const onDown = () => emit("down", props.id);
 .post__card {
   @apply bg-white;
   @apply w-full;
-  @apply px-4 py-4;
+  @apply p-4;
   @apply rounded-md;
   @apply flex;
   @apply justify-between;
@@ -55,6 +55,9 @@ const onDown = () => emit("down", props.id);
     @apply flex flex-col;
     @apply justify-between;
     @apply text-primary-400;
+    svg {
+      @apply hover:cursor-pointer;
+    }
   }
 }
 </style>
