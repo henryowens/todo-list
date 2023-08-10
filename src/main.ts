@@ -4,5 +4,6 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "@/service/fontawsome";
 import "./index.scss";
+import store from "./store";
 
-createApp(App).use(VueQueryPlugin).mount("#app");
+createApp(App).use(store).use(VueQueryPlugin).mount("#app");

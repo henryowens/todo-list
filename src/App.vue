@@ -1,7 +1,7 @@
 <template>
   <div class="app__container">
     <p v-if="error">There was an error loading the page: {{ error }}</p>
-    <p v-else-if="loading || !posts">Loading</p>
+    <p v-else-if="loading || !store.state.posts">Loading</p>
     <div v-else class="page__content">
       <div class="page__left">
         <div class="page__heading">
@@ -9,11 +9,11 @@
         </div>
         <div class="post__cards__container">
           <PostCard
-            v-for="(post, i) in posts"
+            v-for="(post, i) in store.state.posts"
             :key="i"
             :name="post.name"
             :can-move-up="i !== 0"
-            :can-move-down="i + 1 !== posts.length"
+            :can-move-down="i + 1 !== store.state.posts.length"
             @up="() => onUp(i)"
             @down="() => onDown(i)"
           />
@@ -25,21 +25,25 @@
         </template>
         <template v-slot:body>
           <div class="list__item__container">
-            <p v-if="!actions.length" class="empty__list__message">
+            <p
+              v-if="!store.state.actionHistory.length"
+              class="empty__list__message"
+            >
               There are no actions.
             </p>
             <div
               v-else
-              v-for="(action, i) in actions"
+              v-for="(action, i) in store.state.actionHistory"
               :key="i"
               class="list__item"
             >
               <p>
-                Moved {{ action.post.name?.toLocaleLowerCase() }} from
-                {{ action.from + 1 }} to
-                {{ action.to + 1 }}
+                Moved
+                {{ action.state[action.from].name.toLocaleLowerCase() }} from
+                index {{ action.from }} to index
+                {{ action.to }}
               </p>
-              <Button>Time Travel</Button>
+              <Button @click="() => onTimeTravel(i)">Time Travel</Button>
             </div>
           </div>
         </template>
@@ -52,52 +56,30 @@
 import { onMounted, ref } from "vue";
 
 import { Button, Card, PostCard } from "@/components";
-import postsApiService from "@/api/posts/service";
-import { Post } from "./api/posts/models";
+import { useStore } from "@/store";
+import { ActionTypes } from "@/store/actions";
 
-interface PostWithName extends Post {
-  name: string;
-}
-const posts = ref<PostWithName[]>([]);
+const store = useStore();
+
 const loading = ref(false);
 const error = ref<unknown>();
 
 onMounted(async () => {
-  try {
-    loading.value = true;
-    const result = await postsApiService.get();
-    if (result)
-      posts.value = result.map((post, index) => ({
-        ...post,
-        name: `Card ${index + 1}`,
-      }));
-  } catch (err) {
-    error.value = err;
-  }
+  loading.value = true;
+  await store
+    .dispatch(ActionTypes.GET_INITIAL_POSTS)
+    .catch((err) => (error.value = err));
   loading.value = false;
 });
 
-interface Action {
-  from: number;
-  to: number;
-  post: PostWithName;
-  currentState: PostWithName[];
-}
+const onUp = (from: number) =>
+  store.dispatch(ActionTypes.SWAP_POSTS, { from, to: from - 1 });
 
-const actions = ref<Action[]>([]);
+const onDown = (from: number) =>
+  store.dispatch(ActionTypes.SWAP_POSTS, { from, to: from + 1 });
 
-function swapElements<T>(array: Array<T>, from: number, to: number) {
-  [array[from], array[to]] = [array[to], array[from]];
-}
-
-const addAction = (from: number, to: number) => {
-  const post = posts.value[from];
-  swapElements(posts.value, from, to);
-  actions.value.unshift({ to, from, post, currentState: posts.value });
-};
-
-const onUp = (from: number) => addAction(from, from - 1);
-const onDown = (from: number) => addAction(from, from + 1);
+const onTimeTravel = (index: number) =>
+  store.dispatch(ActionTypes.TIME_TRAVEL, index);
 </script>
 
 <style lang="scss" scoped>
