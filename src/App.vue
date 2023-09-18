@@ -7,7 +7,11 @@
         <div class="page__heading">
           <h1 class="page__title">Sortable Post List</h1>
         </div>
-        <div class="post__cards__container">
+        <transition-group
+          name="move"
+          tag="div"
+          class="post-list post__cards__container"
+        >
           <PostCard
             v-for="(post, i) in store.state.posts"
             :key="i"
@@ -17,7 +21,7 @@
             @up="() => onUp(i)"
             @down="() => onDown(i)"
           />
-        </div>
+        </transition-group>
       </div>
       <Card class="page__right">
         <template v-slot:header>
@@ -105,7 +109,8 @@ const onTimeTravel = (index: number) =>
         @apply gap-6;
         @apply overflow-y-auto;
         @apply rounded-md;
-        @apply transition;
+        // @apply transition;
+        transition: transform 0.5s;
       }
     }
     .page__right {
@@ -133,6 +138,21 @@ const onTimeTravel = (index: number) =>
       }
     }
   }
+}
+.move-enter-active,
+.move-leave-active,
+.move-move {
+  transition: transform 0.5s;
+}
+
+.move-enter,
+.move-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.move-move {
+  transition: transform 0.5s;
 }
 </style>
 >
